@@ -8,6 +8,7 @@ import tk.diffusehyperion.discordminecraftbridge.events.*;
 public final class DiscordMinecraftBridge extends JavaPlugin{
 
     public static Plugin plugin;
+    public static Javalin app;
 
     @Override
     public void onEnable() {
@@ -19,12 +20,13 @@ public final class DiscordMinecraftBridge extends JavaPlugin{
         getServer().getPluginManager().registerEvents(new OnPlayerKickedEvent(), this); // /kick, "name": "kick reason (was being annoying)"
         getServer().getPluginManager().registerEvents(new OnPlayerLeaveEvent(), this); // /leave, "name": "leave message (Player left the game)"
 
-        Javalin app = Javalin.create(/*config*/)
+        app = Javalin.create(/*config*/)
                 .post("/", ctx -> OnJavalinReceive.main(ctx.body()))
                 .start(25566);
     }
 
     @Override
     public void onDisable() {
+        app.stop();
     }
 }

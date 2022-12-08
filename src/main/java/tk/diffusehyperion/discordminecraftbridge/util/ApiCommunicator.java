@@ -17,11 +17,12 @@ import static tk.diffusehyperion.discordminecraftbridge.DiscordMinecraftBridge.p
 public class ApiCommunicator {
     public String sendRequest(String suffix, String method, JsonObject obj) {
         StringBuilder response = new StringBuilder();
+        Bukkit.getLogger().info("https://Discord-Minecraft-bridge.diffusehyperion.repl.co" + suffix);
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-                    String apiLink = "https://Discord-Minecraft-bridge.diffusehyperion.repl.co/" + suffix;
+                    String apiLink = "https://Discord-Minecraft-bridge.diffusehyperion.repl.co" + suffix;
                     URL url = new URL(apiLink);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod(method.toUpperCase());
@@ -49,6 +50,7 @@ public class ApiCommunicator {
                     }
                     br.close();
                     conn.disconnect();
+                    this.cancel();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

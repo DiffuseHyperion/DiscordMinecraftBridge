@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import tk.diffusehyperion.discordminecraftbridge.util.ApiCommunicator;
 
-public class OnPlayerDeathEvent extends ApiCommunicator implements Listener{
+public class OnPlayerDeathEvent extends ApiCommunicator implements Listener {
     @EventHandler
     public void PlayerDeathEvent(PlayerDeathEvent e) {
         JsonObject obj = new JsonObject();
