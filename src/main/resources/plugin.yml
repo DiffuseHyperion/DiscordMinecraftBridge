@@ -1,0 +1,4 @@
+name: DiscordMinecraftBridge
+version: '${project.version}'
+main: tk.diffusehyperion.discordminecraftbridge.DiscordMinecraftBridge
+api-version: 1.19
