@@ -1,6 +1,5 @@
 package tk.diffusehyperion.discordminecraftbridge.events;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -14,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import static tk.diffusehyperion.discordminecraftbridge.DiscordMinecraftBridge.plugin;
 
@@ -23,7 +23,6 @@ public class OnPlayerChatEvent implements Listener {
         JsonObject obj = new JsonObject();
         obj.addProperty(e.getPlayer().getDisplayName(), e.getMessage());
 
-        Bukkit.getLogger().info("sending: " + obj);
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
@@ -33,10 +32,13 @@ public class OnPlayerChatEvent implements Listener {
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Accept", "application/json");
-
+                    conn.setRequestProperty("Content-Type", "application/json");
                     conn.setDoOutput(true);
+                    conn.setDoInput(true);
+
                     OutputStream os = conn.getOutputStream();
-                    os.write(obj.toString().getBytes());
+                    byte[] output = obj.toString().getBytes(StandardCharsets.UTF_8);
+                    os.write(output, 0, output.length);
                     os.flush();
                     os.close();
 
@@ -47,10 +49,12 @@ public class OnPlayerChatEvent implements Listener {
                     BufferedReader br = new BufferedReader(new InputStreamReader(
                             (conn.getInputStream())));
 
-                    String output;
-                    while ((output = br.readLine()) != null) {
-                        Bukkit.getLogger().info("received output: " + output);
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+                    while ((inputLine = br.readLine()) != null) {
+                        response.append(inputLine);
                     }
+                    br.close();
                     conn.disconnect();
                 } catch (IOException ex) {
                     ex.printStackTrace();
